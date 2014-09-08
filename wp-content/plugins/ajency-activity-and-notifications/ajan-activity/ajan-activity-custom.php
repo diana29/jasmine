@@ -304,3 +304,16 @@ function ajan_activity_get_components() {
 	}
    return $components;
 }
+
+
+ /**
+ * delete activity by id
+ *
+ * @since ajency-activity-and-notifications (0.1.0)  
+ */
+ 
+function ajan_activity_delete_by_id($id){
+
+	return ajan_activity_delete(array('id'=>$id));
+	
+}

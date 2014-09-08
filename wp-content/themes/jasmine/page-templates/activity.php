@@ -59,7 +59,7 @@ get_header(); ?>
 
 		<div  style="height: 40px;">
 			<div  >
-				<input type="submit" name="aw-whats-new-submit" id="aw-whats-new-submit" value="Post Update" >
+				<input type="submit" name="aw-whats-new-submit" id="add-activity" value="Post Update" >
 			</div>
 
 			 

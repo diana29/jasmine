@@ -48,6 +48,11 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 			$routes['/activity/create'] = array(
 				array( array( $this, 'add_activity'), WP_JSON_Server::CREATABLE | WP_JSON_Server::ACCEPT_JSON ),
 			);
+			$routes['/activity/delete/(?P<id>\d+)'] = array(
+				 array( array( $this, 'delete_activity'), WP_JSON_Server::DELETABLE)
+				
+			);
+ 
 			$routes['/comment/create'] = array(
 				array( array( $this, 'add_comment'), WP_JSON_Server::CREATABLE | WP_JSON_Server::ACCEPT_JSON ),
 			);
@@ -66,7 +71,7 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 			return $routes;
 		}
 
-		function get_user_activities($id,$component){
+		function get_user_activities($id,$component=''){
 
 				$args['user_id'] = $id;
 				/*if(is_array($filter)){
@@ -74,6 +79,9 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 						$args[$filter_key] = $filter_item;
 					}
 				}*/
+				if(isset($_REQUEST['component'])){
+  					$component = $_REQUEST['component'];
+  				}
 				$args['component'] = $component;
 				return ajan_get_user_personal_activities($args);
 		}
@@ -95,7 +103,7 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 	 			$error = array();
 
-	 			$status = "";
+	 			$status = false;  
 
 	 			if(isset($_POST["user_id"])){
 	 				
@@ -133,13 +141,13 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 						$response = ajan_get_activity_by_id($response);
 					}
-					$status = "1";
+					$status = true;
 
 	 			}else{
 
 	 				$response = $error;
 
-	 				$status = "0";
+	 				$status = false;
 
 
 	 			}
@@ -157,6 +165,22 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		}
 
 
+		function update_activity(){
+
+		}
+
+		function delete_activity($id){
+ 
+			$status = ajan_activity_delete_by_id($id);
+			$response = json_encode(array('status'=>$status ));
+
+			header( "Content-Type: application/json" );
+
+			echo $response;
+
+			exit;
+
+		}
 		function add_comment(){
 	 			
 	 			global $user_ID;
@@ -165,7 +189,7 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 	 			$error = array();
 
-	 			$status = "";
+	 			$status = false;
 
 	 			if(isset($_POST["user_id"])){
 	 				
@@ -185,20 +209,20 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	 			}
  
 	 			if(count($error)==0){
-	  
+	 
 					$response = ajan_activity_new_comment($comment); 
 					 
 					if($response !=false){
 						$response = ajan_get_activity_by_id($response);
 					}
 					
-					$status = "1";
+					$status = true;
 
 	 			}else{
 
 	 				$response = $error;
 
-	 				$status = "0";
+	 				$status = false;
 
 
 	 			}

@@ -28,7 +28,7 @@ jQuery(document).ready(function($) {
             });
 
     });  
-	  $(document).on("click", ".ac_form_submit", function(e) {
+	  $(document).on("click", ".add-comment", function(e) {
 
             if($(e.target).attr('activity-type')=="activity_comment"){
                 parent_id = $(e.target).attr('activity-id')
@@ -37,31 +37,56 @@ jQuery(document).ready(function($) {
                 parent_id = 0
                 activity_id  = $(e.target).attr('activity-id')             
             }
-	  		 $.post("http://localhost/jasmine/api/comment/create", { 
-                parent_id:  parent_id, 
-                activity_id:  activity_id, 
-                content:  $(e.target).prev().find(".comment").val(),  
-                 
-              }, function(response)  {  
 
-            	 console.log(response)
+             data = ({'parent_id':parent_id, 
+                      'activity_id': activity_id, 
+                      'content':$(e.target).prev().find(".comment").val(),  
+                      });
+
+	  		     $.ajax({url: "http://localhost/jasmine/api/comment/create",
+                type: 'POST', 
+                data:  data,    
+                success: function(response) {
+
+            	     if(response.status==true){
+
+                      alert("Activity Comment Added (Refresh this page)")
+
+                    }
+              }
         	});
 	  });
-      $(document).on("click", "#aw-whats-new-submit", function(e) {
-
-          console.log("#aw-whats-new-submit")
-             $.post("http://localhost/jasmine/api/activity/create", { 
-               action:  '@admin posted an update', 
-               content:  $("#whats-new").val(),  
-               component: 'activity',  
-               type: 'activity_update',  
-                 
-              }, function(response)  {  
-
-                 console.log(response)
-            });
+      $(document).on("click", "#add-activity", function(e) {
+ 
+             data = ({'action':'@admin posted an update', 
+                      'content': $("#whats-new").val(), 
+                      'component':'activity',  
+                      'type':'activity_update',  
+                      });
+             $.ajax({url: "http://localhost/jasmine/api/activity/create",
+                      type: 'POST',
+                      data:data,
+                      success: function(response) {
+                         if(response.status==true){
+                            alert("Activity Added (Refresh this page)")
+                         }
+                      }
+                    });
       });
 
+//deleting a activity
+$(document).on("click", ".delete-comment", function(e) {
+     $.ajax({
+      url: "http://localhost/jasmine/api/activity/delete/"+$(e.target).attr('activity-id'),
+      type: 'DELETE',
+      success: function(response) {
+           if(response.status==true){
+              alert("Activity Deleted (Refresh this page)")
+           }
+      }
+  });
+ 
+});
       function display_activitites(collection){
         $("#activity-stream").html("");
         _.each(collection, function(item,itemValue){
@@ -86,7 +111,7 @@ jQuery(document).ready(function($) {
                 activity +='</div>';
             }
             activity +='<div class="activity-meta">';
-            activity +='<a href="javascript:void(0)" class="acomment-reply bp-primary-action reply-to-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'" item-id="'+item.item_id+'">Comment</a>'
+            activity +='<a href="javascript:void(0)" class="acomment-reply bp-primary-action reply-to-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'" item-id="'+item.item_id+'">Comment</a> &nbsp; <a href="javascript:void(0)" class="acomment-reply bp-primary-action delete-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'"  >Delete</a>'
             activity +='</div>';
             activity +='<div class="activity-comments">';
             activity +='<ul  class="activity-stream">';
@@ -130,7 +155,7 @@ jQuery(document).ready(function($) {
 
         comment +='</div>'
 
-        comment +='<input type="button" class="ac_form_submit" value="Post" activity-id='+activityId+' activity-item-id='+activityItemId+' activity-type='+activityType+'> &nbsp; <a href="javascript:void(0)" class="ac-reply-cancel" comment-parent='+activityId+'>Cancel</a>'
+        comment +='<input type="button" class="add-comment" value="Post" activity-id='+activityId+' activity-item-id='+activityItemId+' activity-type='+activityType+'> &nbsp; <a href="javascript:void(0)" class="ac-reply-cancel" comment-parent='+activityId+'>Cancel</a>'
        
         comment +='</div>'
 
