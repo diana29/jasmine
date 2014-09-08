@@ -1142,7 +1142,7 @@ function ajan_activity_add( $args = '' ) {
 	$activity->hide_sitewide     = $hide_sitewide;
 	$activity->is_spam           = $is_spam;
 	$activity->action            = ! empty( $action ) ? $action : ajan_activity_generate_action_string( $activity );
-
+var_dump($activity);
 	if ( !$activity->save() )
 		return false;
 

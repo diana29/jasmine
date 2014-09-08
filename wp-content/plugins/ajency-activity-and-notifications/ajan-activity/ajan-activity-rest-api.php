@@ -52,7 +52,10 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 				 array( array( $this, 'delete_activity'), WP_JSON_Server::DELETABLE)
 				
 			);
- 
+ 			$routes['/activity/update/(?P<id>\d+)'] = array(
+				 array( array( $this, 'update_activity'),      WP_JSON_Server::EDITABLE | WP_JSON_Server::ACCEPT_JSON ),
+				
+			);
 			$routes['/comment/create'] = array(
 				array( array( $this, 'add_comment'), WP_JSON_Server::CREATABLE | WP_JSON_Server::ACCEPT_JSON ),
 			);
@@ -164,10 +167,77 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 		}
 
+		function update_activity($id){
+	 			
+	 			global $user_ID;
 
-		function update_activity(){
+	 			$activity = array();
+
+	 			$error = array();
+
+	 			$status = false;  
+				$id = (int) $id;
+
+				if ( empty( $id ) ) {
+					$error[] = "Invalid Activity ID";
+				} 
+	 				
+	 			$activity['id'] = $id;
+	 			 
+
+	 			if(isset($_POST["action"])){
+	 				
+	 				$activity['action'] = $_POST["action"];
+	 			}
+
+	 			if(isset($_POST["content"])){
+	 				
+	 				$activity['content'] = $_POST["content"];
+	 			}
+
+	 			if(isset($_POST["component"])){
+	 				
+	 				$activity['component'] = $_POST["component"];
+	 			}
+
+	 			if(isset($_POST["type"])){
+	 				
+	 				$activity['type'] = $_POST["type"];
+	 			}
+	  
+	  			 var_dump($activity);
+
+	 			if(count($error)==0){
+ 
+					$response = ajan_activity_add($activity); 
+
+					if($response !=false){
+
+						$response = ajan_get_activity_by_id($response);
+					}
+					$status = true;
+
+	 			}else{
+
+	 				$response = $error;
+
+	 				$status = false;
+
+
+	 			}
+				
+				$response = array('status'=>$status,'response' => $response);
+
+				$response = json_encode( $response );
+
+			    header( "Content-Type: application/json" );
+
+			    echo $response;
+
+			    exit;
 
 		}
+ 
 
 		function delete_activity($id){
  

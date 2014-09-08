@@ -87,6 +87,24 @@ $(document).on("click", ".delete-comment", function(e) {
   });
  
 });
+
+//editing a activity
+$(document).on("click", ".edit-activity", function(e) {
+    data = ({'id':$(e.target).attr('activity-id'), 
+            'content': $("#edit-content-"+$(e.target).attr('activity-id')).val(),    
+            });
+     $.ajax({
+      url: "http://localhost/jasmine/api/activity/update/"+$(e.target).attr('activity-id'),
+      type: 'POST',
+      data :data,
+      success: function(response) {
+           if(response.status==true){
+              alert("Activity Updated (Refresh this page)")
+           }
+      }
+  });
+ 
+});
       function display_activitites(collection){
         $("#activity-stream").html("");
         _.each(collection, function(item,itemValue){
@@ -107,11 +125,11 @@ $(document).on("click", ".delete-comment", function(e) {
             activity +='</div>';
             if(item.content !=""){
                 activity +='<div class="activity-inner">';
-                activity +='<b>Content: </b>'+item.content; 
+                activity +='<b>Content: </b><div id="activity-content-'+item.id+'">'+item.content+'</div>'; 
                 activity +='</div>';
             }
             activity +='<div class="activity-meta">';
-            activity +='<a href="javascript:void(0)" class="acomment-reply bp-primary-action reply-to-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'" item-id="'+item.item_id+'">Comment</a> &nbsp; <a href="javascript:void(0)" class="acomment-reply bp-primary-action delete-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'"  >Delete</a>'
+            activity +='<a href="javascript:void(0)" class="acomment-reply bp-primary-action reply-to-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'" item-id="'+item.item_id+'">Comment</a>  &nbsp; <a href="javascript:void(0)" class="acomment-reply bp-primary-action edit-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'"  >Edit</a>&nbsp; <a href="javascript:void(0)" class="acomment-reply bp-primary-action delete-comment" id="acomment-comment-'+item.id+'"  activity-type="'+item.type+'" activity-id="'+item.id+'"  >Delete</a>'
             activity +='</div>';
             activity +='<div class="activity-comments">';
             activity +='<ul  class="activity-stream">';
@@ -176,5 +194,30 @@ $(document).on("click", ".delete-comment", function(e) {
 
        })
 
+       //
+        $(document).on("click", ".edit-comment", function(e) { 
+             $("#activity-content-"+$(e.target).attr('activity-id')).hide().parent().append(editCommentBox($(e.target).attr('activity-id')))
+
+       })
+       function  editCommentBox(id){
+
+ 
+        html = "<div id='edit-comment-"+id+"'>"
+
+        html += "<textarea id='edit-content-"+id+"'>"+$("#activity-content-"+id).html()+"</textarea>"
+        
+        html +='<input type="button" class="edit-activity" value="Update" activity-id='+id+'  > &nbsp; <a href="javascript:void(0)" activity-id='+id+' class="update-cancel"   >Cancel</a>'
+        
+        html += "</div>"
+
+       return html
+
+       }
+      $(document).on("click", ".update-cancel", function(e) {
+
+             $("#activity-content-"+$(e.target).attr('activity-id')).show();
+             $("#edit-comment-"+$(e.target).attr('activity-id')).remove();
+
+       })
       
 });
