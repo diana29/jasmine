@@ -184,7 +184,7 @@ class AJAN_Activity_Activity {
 	 * @return bool True on success.
 	 */
 	public function save() {
-		echo "saving;";
+ 
 		global $wpdb, $ajan;
 
 		$this->id                = apply_filters_ref_array( 'ajan_activity_id_before_save',                array( $this->id,                &$this ) );
@@ -207,7 +207,7 @@ class AJAN_Activity_Activity {
 			return false;
   
 		// If we have an existing ID, update the activity item, otherwise insert it.
-		echo $this->id ;
+	 
 		if ( $this->id )
 			$q = $wpdb->prepare( "UPDATE {$ajan->activity->table_name} SET user_id = %d, component = %s, type = %s, action = %s, content = %s,   date_recorded = %s, item_id = %d, secondary_item_id = %d, hide_sitewide = %d  WHERE id = %d", $this->user_id, $this->component, $this->type, $this->action, $this->content,   $this->date_recorded, $this->item_id, $this->secondary_item_id, $this->hide_sitewide , $this->id );
 		else

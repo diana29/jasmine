@@ -90,6 +90,8 @@ $(document).on("click", ".delete-comment", function(e) {
 
 //editing a activity
 $(document).on("click", ".edit-activity", function(e) {
+
+  activity_id = $(e.target).attr('activity-id');
     data = ({'id':$(e.target).attr('activity-id'), 
             'content': $("#edit-content-"+$(e.target).attr('activity-id')).val(),    
             });
@@ -99,7 +101,10 @@ $(document).on("click", ".edit-activity", function(e) {
       data :data,
       success: function(response) {
            if(response.status==true){
-              alert("Activity Updated (Refresh this page)")
+              alert("Activity Updated ")
+              $("#activity-content-"+activity_id).html($("#edit-content-"+activity_id).val());
+              $("#edit-comment-"+activity_id).remove();
+              $("#activity-content-"+activity_id).show();
            }
       }
   });

@@ -205,8 +205,12 @@ include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	 				$activity['type'] = $_POST["type"];
 	 			}
 	  
-	  			 var_dump($activity);
+	  			
+				$defaults = (array)ajan_get_activity_by_id($id);
 
+
+				$activity = wp_parse_args( $activity, $defaults );
+				 
 	 			if(count($error)==0){
  
 					$response = ajan_activity_add($activity); 
